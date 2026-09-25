@@ -21,6 +21,7 @@
     --brand-dark:#1fae5e;
     --gold:#d9b26a;
     --gold-dark:#a5813e;
+    --gold-50:#2a2214;
     --ridge-1:#0d1015;
     --ridge-2:#161b23;
     --ridge-3:#20272f;
@@ -44,6 +45,7 @@
     --brand-dark:#029a46;
     --gold:#a5762f;
     --gold-dark:#7c5a24;
+    --gold-50:#faf3e4;
     --ridge-1:#dfe6ee;
     --ridge-2:#eef2f7;
     --ridge-3:#f7f9fb;
@@ -127,6 +129,7 @@
     background:var(--blue-100); color:var(--blue-700); margin-left:6px; font-weight:700;
   }
   .badge.placeholder{background:var(--placeholder-bg); color:var(--ink-soft)}
+  .badge.heritage{background:var(--gold-50); color:var(--gold-dark); border:1px solid var(--gold)}
   .empty{padding:30px 10px; text-align:center; color:var(--ink-soft)}
   figure.temple-photo{margin:0 0 16px 0}
   figure.temple-photo img{
@@ -452,6 +455,29 @@ const WITH_COORD = TEMPLES.filter(t=>t.lat!=null && t.lon!=null).length;
 const WITH_FOUNDED = TEMPLES.filter(t=>t.founded).length;
 const WITH_HISTORY = TEMPLES.filter(t=>t.history).length;
 const WITH_HERITAGE = TEMPLES.filter(t=>t.heritageItems && t.heritageItems.length).length;
+const HERITAGE_NATIONAL_TIERS = ['국보','보물','사적','명승','천연기념물','국가무형유산','국가민속문화유산','국가등록문화유산'];
+const HERITAGE_LOCAL_SUFFIXES = ['유형문화유산','무형유산','기념물','민속문화유산','자연유산','문화유산자료','등록문화유산'];
+function heritageBadge(items){
+  if(!items || !items.length) return null;
+  let label = null;
+  for(const tier of HERITAGE_NATIONAL_TIERS){
+    if(items.some(it=>it.type===tier)){ label = tier; break; }
+  }
+  if(!label){
+    for(const suf of HERITAGE_LOCAL_SUFFIXES){
+      const hit = items.find(it=>it.type && it.type.endsWith(suf) && !HERITAGE_NATIONAL_TIERS.includes(it.type));
+      if(hit){ label = suf; break; }
+    }
+  }
+  if(!label) label = '지정문화유산';
+  return { label, extra: items.length>1 ? items.length-1 : 0 };
+}
+function hasNationalHeritage(t){
+  return !!(t.heritageItems && t.heritageItems.some(it=>HERITAGE_NATIONAL_TIERS.includes(it.type)));
+}
+function hasHeritageType(t, type){
+  return !!(t.heritageItems && t.heritageItems.some(it=>it.type===type));
+}
 const WITH_MONKS = TEMPLES.filter(t=>t.monks).length;
 const WITH_BELIEVERS = TEMPLES.filter(t=>t.believers).length;
 const WITH_DENOM = TEMPLES.filter(t=>t.denom).length;
@@ -742,7 +768,7 @@ function goHomeSearch(){
 }
 
 // ---------------- 검색·목록 ----------------
-let searchState = { q:'', province:'', founded:'', coordOnly:false, page:1 };
+let searchState = { q:'', province:'', founded:'', heritage:'', coordOnly:false, page:1 };
 const PAGE_SIZE = 20;
 
 function viewSearch(){
@@ -774,6 +800,15 @@ function viewSearch(){
           <option value="after1500" ${searchState.founded==='after1500'?'selected':''}>1500년 이후</option>
         </select>
       </label>
+      <label>국가유산
+        <select id="fHeritage">
+          <option value="">전체</option>
+          <option value="any" ${searchState.heritage==='any'?'selected':''}>국가유산 보유(전체)</option>
+          <option value="국보" ${searchState.heritage==='국보'?'selected':''}>국보 보유</option>
+          <option value="보물" ${searchState.heritage==='보물'?'selected':''}>보물 보유</option>
+          <option value="national" ${searchState.heritage==='national'?'selected':''}>국가지정문화유산 보유</option>
+        </select>
+      </label>
       <label><input type="checkbox" id="fCoord" ${searchState.coordOnly?'checked':''}> 좌표 확인된 사찰만</label>
       <button class="btn ghost" onclick="applySearch()">필터 적용</button>
     </div>
@@ -789,6 +824,7 @@ function applySearch(){
   searchState.q = document.getElementById('q').value.trim();
   searchState.province = document.getElementById('fProvince').value;
   searchState.founded = document.getElementById('fFounded').value;
+  searchState.heritage = document.getElementById('fHeritage').value;
   searchState.coordOnly = document.getElementById('fCoord').checked;
   searchState.page = 1;
   renderSearchResults();
@@ -801,6 +837,11 @@ function filteredTemples(){
       if(!hit) return false;
     }
     if(searchState.province && t.province !== searchState.province) return false;
+    if(searchState.heritage){
+      if(searchState.heritage==='any' && !(t.heritageItems && t.heritageItems.length)) return false;
+      if(searchState.heritage==='national' && !hasNationalHeritage(t)) return false;
+      if((searchState.heritage==='국보'||searchState.heritage==='보물') && !hasHeritageType(t, searchState.heritage)) return false;
+    }
     if(searchState.coordOnly && (t.lat==null || t.lon==null)) return false;
     if(searchState.founded){
       const y = extractYear(t.founded);
@@ -829,7 +870,7 @@ function renderSearchResults(){
       ${pageItems.map(t=>`
         <li><a href="#/temple/${t.id}">
           <span class="t-main">
-            <span class="t-name">${esc(t.name)}${t.lat==null?'<span class="badge placeholder">좌표없음</span>':''}${t.founded?`<span class="badge">${esc(t.founded)}</span>`:''}${(!t.photo && t.photoLinkOut)?'<span class="badge linkout">🔗사진</span>':''}</span>
+            <span class="t-name">${esc(t.name)}${t.lat==null?'<span class="badge placeholder">좌표없음</span>':''}${t.founded?`<span class="badge">${esc(t.founded)}</span>`:''}${(()=>{const hb=heritageBadge(t.heritageItems); return hb?`<span class="badge heritage">${esc(hb.label)}${hb.extra?` 외 ${hb.extra}건`:''}</span>`:'';})()}${(!t.photo && t.photoLinkOut)?'<span class="badge linkout">🔗사진</span>':''}</span>
             <span class="t-addr">${esc(t.addr||'')}</span>
           </span>
         </a></li>
