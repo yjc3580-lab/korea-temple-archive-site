@@ -451,6 +451,7 @@
   .meditation-card .med-name{font-size:14.5px; font-weight:800; color:var(--ink)}
   .meditation-card .med-region{font-size:12px; color:var(--ink-soft)}
   .meditation-card .med-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.65}
+  .card-thumb{width:calc(100% + 32px); margin:-16px -16px 0 -16px; height:110px; object-fit:cover; display:block; border-radius:var(--radius) var(--radius) 0 0; background:var(--placeholder-bg)}
 
   /* ---- 대표 사찰(교구본사) 카드 ---- */
   .headtemple-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:16px}
@@ -1749,7 +1750,9 @@ function viewRoutes(){
     <div class="meditation-grid">
       ${MEDITATION_LIST.map(m=>{
         const tid = MEDITATION_ID_MAP[m.n];
+        const photo = tid ? templePhotoById(tid) : null;
         return `<a class="meditation-card" href="#/temple/${tid}">
+          ${photo ? `<img class="card-thumb" src="${esc(photo)}" alt="${esc(m.n)}" loading="lazy">` : ''}
           <span class="med-name">${esc(m.n)}</span>
           <span class="med-region muted">${esc(m.r)}</span>
           <span class="med-desc">${esc(m.desc)}</span>
@@ -1801,7 +1804,9 @@ function viewRoutes(){
     <div class="sambo-grid">
       ${SAMBO_LIST.map(s=>{
         const tid = SAMBO_ID_MAP[s.n];
+        const photo = tid ? templePhotoById(tid) : null;
         return `<a class="sambo-card" href="#/temple/${tid}">
+          ${photo ? `<img class="card-thumb" src="${esc(photo)}" alt="${esc(s.n)}" loading="lazy">` : ''}
           <span class="sambo-role">${esc(s.role)}</span>
           <span class="sambo-name">${esc(s.n)}</span>
           <span class="sambo-region muted">${esc(s.r)}</span>
@@ -1818,9 +1823,10 @@ function viewRoutes(){
     <div class="pilgrim-list">
       ${UNESCO7_LIST.map((u,i)=>{
         const tid = UNESCO7_ID_MAP[u.n];
+        const photo = tid ? templePhotoById(tid) : null;
         const inner = `
           <span class="pilgrim-num">${i+1}</span>
-          ${svgLotus(16)}
+          ${photo ? `<img class="pilgrim-thumb" src="${esc(photo)}" alt="${esc(u.n)}" loading="lazy">` : svgLotus(16)}
           <span class="p-name">${esc(u.n)}</span>
           <span class="p-region">${esc(u.r)}</span>
           <span class="p-goto" aria-hidden="true">자세히 →</span>
