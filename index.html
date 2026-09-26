@@ -787,7 +787,7 @@ function viewHome(){
       <div class="timeline-item"><b>안내</b><p>소속 종단은 문화체육관광부 공식 명단(980개소, 2023.1.31 기준)과 이름·주소를 대조해 ${WITH_DENOM.toLocaleString()}곳(${(WITH_DENOM/TOTAL*100).toFixed(1)}%)에 반영했습니다. 자세한 방법론은 <a href="#/about">데이터 출처</a> 페이지를 참고해 주세요.</p></div>
       <div class="timeline-item"><b>국가유산</b><p>국가유산청 국가유산포털 "종목별 검색" 자료와 사찰명·소재지를 대조해 ${WITH_HERITAGE.toLocaleString()}곳(${(WITH_HERITAGE/TOTAL*100).toFixed(1)}%)에 국보·보물 등 국가유산 지정 현황을 반영했습니다.</p></div>
       <div class="timeline-item"><b>템플스테이·순례 코스</b><p>템플스테이 운영 사찰 ${TEMPLESTAY_LIST.length}곳(templestay.com·한국불교문화사업단 기준), 한국전통사찰순례 33관음성지 ${PILGRIM33_LIST.length}곳을 비롯해 삼보사찰 ${SAMBO_LIST.length}곳, 유네스코 세계유산 "산사, 한국의 산지승원" ${UNESCO7_LIST.length}곳, 총림 ${CHONGRIM_LIST.length}곳, 적멸보궁 ${JEOKMYEOL_LIST.length}곳, 계절별 추천 코스·명상하기 좋은 산사 등 다양한 테마별 순례 코스를 <a href="#/routes">순례 코스</a> 페이지에 반영했습니다.</p></div>
-      <div class="timeline-item"><b>사진</b><p>사진이 아직 확보되지 않은 사찰은 상세 페이지에서 출처가 확인된 외부 링크로 연결됩니다. 저작권이 검증되지 않은 이미지는 직접 게시하지 않습니다.</p></div>
+      <div class="timeline-item"><b>사진</b><p>위키미디어 커먼즈(CC 라이선스)·공공누리 등 재사용이 허가된 출처가 확인된 ${PHOTO_TEMPLES.length.toLocaleString()}곳에만 사진을 표시합니다. 저작권이 확인되지 않은 사진은 직접 게시하지 않으며, 아직 확보되지 않은 사찰은 사진 없이 안내됩니다.</p></div>
     </div>
 
     ${divider}
