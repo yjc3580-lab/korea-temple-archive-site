@@ -434,14 +434,14 @@
   .seasonal-note{margin:0; line-height:1.6}
   .sambo-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:28px; margin-top:14px}
   .sambo-card{
-    display:flex; flex-direction:column; gap:5px; border:1px solid var(--line); border-radius:var(--radius);
+    display:flex; flex-direction:column; gap:9px; border:1px solid var(--line); border-radius:var(--radius);
     padding:16px; background:var(--bg-raised); text-decoration:none;
   }
   .sambo-card:hover{border-color:var(--brand)}
-  .sambo-role{font-size:11px; font-weight:700; color:var(--brand-dark)}
+  .sambo-role{font-size:11px; font-weight:700; color:var(--brand-dark); margin-top:2px}
   .sambo-name{font-size:16px; font-weight:800; color:var(--ink)}
   .sambo-region{font-size:12px}
-  .sambo-desc{font-size:12px; line-height:1.6}
+  .sambo-desc{font-size:12px; line-height:1.7}
   .meditation-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:10px}
   .meditation-card{
     display:flex; flex-direction:column; gap:6px; border:1px solid var(--line); border-radius:var(--radius);
@@ -911,7 +911,7 @@ function renderSearchResults(){
         <li><a href="#/temple/${t.id}">
           <span class="t-main">
             <span class="t-name">${esc(t.name)}${t.lat==null?'<span class="badge placeholder">좌표없음</span>':''}${t.founded?`<span class="badge">${esc(t.founded)}</span>`:''}${(()=>{const hb=heritageBadge(t.heritageItems); return hb?`<span class="badge heritage">${esc(hb.label)}${hb.extra?` 외 ${hb.extra}건`:''}</span>`:'';})()}${(!t.photo && t.photoLinkOut)?'<span class="badge linkout">🔗사진</span>':''}</span>
-            <span class="t-addr">${esc(t.addr||'')}</span>
+            <span class="t-addr">${esc(t.addr||t.roadAddr||'')}</span>
           </span>
         </a></li>
       `).join('')}
@@ -1194,7 +1194,7 @@ function viewMyPage(){
     <h2>내 컬렉션 (${items.length}곳)</h2>
     ${items.length===0 ? '<p class="empty">아직 담아 둔 사찰이 없습니다. 사찰 상세 페이지에서 "컬렉션에 담기"를 눌러보세요.</p>' : `
       <ul class="temple-list">
-        ${items.map(t=>`<li><a href="#/temple/${t.id}"><span class="t-name">${esc(t.name)}</span><span class="t-addr">${esc(t.addr||'')}</span></a></li>`).join('')}
+        ${items.map(t=>`<li><a href="#/temple/${t.id}"><span class="t-name">${esc(t.name)}</span><span class="t-addr">${esc(t.addr||t.roadAddr||'')}</span></a></li>`).join('')}
       </ul>
       <button class="btn secondary" onclick="exportCitations()">전체 인용 목록 내보내기</button>
     `}
@@ -1204,7 +1204,7 @@ function wireMyPage(){}
 function exportCitations(){
   const items = myCollection.map(id=>findTemple(id)).filter(Boolean);
   const today = new Date().toISOString().slice(0,10);
-  const text = items.map(t=>`${t.name}, ${t.addr||''} (출처: 공공데이터포털 "행정안전부_문화_전통사찰", 확인일: ${today})`).join('\\n');
+  const text = items.map(t=>`${t.name}, ${t.addr||t.roadAddr||''} (출처: 공공데이터포털 "행정안전부_문화_전통사찰", 확인일: ${today})`).join('\\n');
   if(navigator.clipboard){
     navigator.clipboard.writeText(text).then(()=>alert('인용 목록이 클립보드에 복사되었습니다.')).catch(()=>alert(text));
   } else { alert(text); }
@@ -1728,8 +1728,12 @@ function viewRoutes(){
 
     <h2 class="section-title">🗓️ 계절별 추천 순례 코스</h2>
     <div class="seasonal-grid">
-      ${SEASONAL_COURSES.map(s => `
+      ${SEASONAL_COURSES.map(s => {
+        const heroId = SEASONAL_ID_MAP[s.temples[0].n];
+        const heroPhoto = heroId ? templePhotoById(heroId) : null;
+        return `
         <div class="seasonal-card">
+          ${heroPhoto ? `<img class="card-thumb" src="${esc(heroPhoto)}" alt="${esc(s.temples[0].n)}" loading="lazy">` : ''}
           <h3>${s.icon} ${esc(s.season)}</h3>
           <ul class="seasonal-temples">
             ${s.temples.map(t=>{
@@ -1740,7 +1744,8 @@ function viewRoutes(){
           </ul>
           <p class="muted seasonal-note">${esc(s.note)}</p>
         </div>
-      `).join('')}
+      `;
+      }).join('')}
     </div>
     <p class="source-note">위 계절별 명소는 각 사찰이 위치한 지자체·문화재청 등이 널리 소개하는 대표적인 계절 특징(예: 구례 화엄사 홍매화, 고창 선운사 동백숲·꽃무릇, 정읍 내장산 단풍, 인제 백담계곡)을 바탕으로 정리한 것이며, 실제 개화·단풍 시기는 매년 날씨에 따라 달라질 수 있습니다.</p>
 
@@ -2069,7 +2074,7 @@ function viewHeadTempleCard(h){
       <div class="ht-body">
         <span class="ht-no">${esc(h.label)}</span>
         <span class="ht-name">${svgLotus(15)}${esc(t.name)}</span>
-        <span class="ht-meta">${esc(t.addr||'')}${t.founded?` · 창건 ${esc(t.founded)}`:''}</span>
+        <span class="ht-meta">${esc(t.addr||t.roadAddr||'')}${t.founded?` · 창건 ${esc(t.founded)}`:''}</span>
         <span class="ht-history">${histShort}</span>
         <span class="ht-link">${t.photo? '사진·연혁 자세히 보기' : '상세 정보 보기'} →</span>
       </div>
