@@ -413,6 +413,45 @@
   .pdf-info .muted{font-size:12px}
   .pdf-arrow{margin-left:auto; color:var(--red-500); font-weight:800; flex:none}
 
+  /* ---- 순례 코스: 예절/주의사항, 계절별 코스, 삼보사찰 ---- */
+  .section-title{font-size:17px; font-weight:800; color:var(--ink); margin:30px 0 10px; display:flex; align-items:center; gap:6px}
+  .etiquette-block{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-top:10px}
+  .etiquette-group{border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; background:var(--bg-raised)}
+  .etiquette-group h3{margin:0 0 8px; font-size:13.5px; color:var(--ink)}
+  .etiquette-group ul{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:5px}
+  .etiquette-group li{font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  .caution-block{margin-top:14px; border-radius:var(--radius); padding:14px 16px; background:var(--red-50)}
+  .caution-block h3{margin:0 0 8px; font-size:13.5px; color:var(--red-500)}
+  .caution-block ol{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:5px}
+  .caution-block li{font-size:12.5px; color:var(--ink); line-height:1.6}
+  .seasonal-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:10px}
+  .seasonal-card{border:1px solid var(--line); border-radius:var(--radius); padding:16px; background:var(--bg-raised); display:flex; flex-direction:column; gap:8px}
+  .seasonal-card h3{margin:0; font-size:14.5px; color:var(--ink)}
+  .seasonal-temples{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px}
+  .seasonal-temples a{color:var(--brand-dark); text-decoration:none; font-size:13px; font-weight:700}
+  .seasonal-temples a:hover{text-decoration:underline}
+  .seasonal-temples .feature{color:var(--ink-soft); font-weight:400; font-size:12px}
+  .seasonal-note{margin:0; line-height:1.6}
+  .sambo-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-top:10px}
+  .sambo-card{
+    display:flex; flex-direction:column; gap:5px; border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; background:var(--bg-raised); text-decoration:none;
+  }
+  .sambo-card:hover{border-color:var(--brand)}
+  .sambo-role{font-size:11px; font-weight:700; color:var(--brand-dark)}
+  .sambo-name{font-size:16px; font-weight:800; color:var(--ink)}
+  .sambo-region{font-size:12px}
+  .sambo-desc{font-size:12px; line-height:1.6}
+  .meditation-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:10px}
+  .meditation-card{
+    display:flex; flex-direction:column; gap:6px; border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; background:var(--bg-raised); text-decoration:none;
+  }
+  .meditation-card:hover{border-color:var(--brand)}
+  .meditation-card .med-name{font-size:14.5px; font-weight:800; color:var(--ink)}
+  .meditation-card .med-region{font-size:12px; color:var(--ink-soft)}
+  .meditation-card .med-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.65}
+
   /* ---- 대표 사찰(교구본사) 카드 ---- */
   .headtemple-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:16px}
   .headtemple-card{
@@ -1003,6 +1042,16 @@ function viewDetail(id){
     const pgEntry = PILGRIM33_LIST.find(x=>x.n===pgName);
     relatedBadges.push(`<a class="related-badge" href="#/routes">🙏 한국전통사찰순례 33관음성지${pgEntry?` 제${pgEntry.no}호`:''} <span class="rb-ext">순례 코스 보기 →</span></a>`);
   }
+  if(Object.values(SAMBO_ID_MAP).includes(t.id)){
+    const s = SAMBO_LIST.find(x=>SAMBO_ID_MAP[x.n]===t.id);
+    relatedBadges.push(`<a class="related-badge" href="#/routes">💎 삼보사찰 · ${esc(s.role)} <span class="rb-ext">순례 코스 보기 →</span></a>`);
+  }
+  if(Object.values(UNESCO7_ID_MAP).includes(t.id)){
+    relatedBadges.push(`<a class="related-badge" href="#/routes">⛰️ 유네스코 세계유산 "산사, 한국의 산지승원" <span class="rb-ext">순례 코스 보기 →</span></a>`);
+  }
+  if(Object.values(MEDITATION_ID_MAP).includes(t.id)){
+    relatedBadges.push(`<a class="related-badge" href="#/routes">🧘 혼자 명상하기 좋은 산사 <span class="rb-ext">순례 코스 보기 →</span></a>`);
+  }
   const foodName = Object.keys(FOOD_ID_MAP).find(n => FOOD_ID_MAP[n] === t.id);
   if(foodName){
     relatedBadges.push(`<a class="related-badge" href="#/templefood">🍲 사찰음식 특화 사찰 <span class="rb-ext">사찰음식 보기 →</span></a>`);
@@ -1538,6 +1587,86 @@ const PG_ID_MAP = {
   "봉은사": 551,
   "도선사": 266,
 };
+// 삼보사찰(三寶寺刹) — 불교의 세 가지 보배(불보·법보·승보)를 상징하는 사찰로, 한국 불교계에서 전통적으로
+// 함께 묶어 부르는 3곳입니다. 한국불교문화사업단이 지정한 목록이 아니라 표준국어대사전 등 사전적 정의와
+// 오래된 불교 전통 분류이며, 33관음성지와는 별개의 출처입니다.
+const SAMBO_LIST = [
+  {n:"통도사", r:"경상남도 양산시", role:"불보사찰(佛寶寺刹)", desc:"부처님의 진신사리를 모신 금강계단이 있어 '부처의 보배'를 상징합니다."},
+  {n:"해인사", r:"경상남도 합천군", role:"법보사찰(法寶寺刹)", desc:"고려대장경(팔만대장경) 경판을 보관하고 있어 '가르침의 보배'를 상징합니다."},
+  {n:"송광사", r:"전남광주통합특별시 순천시", role:"승보사찰(僧寶寺刹)", desc:"보조국사 지눌 이래 다수의 국사를 배출해 '승가의 보배'를 상징합니다."},
+];
+const SAMBO_ID_MAP = { "통도사": 1300, "해인사": 1342, "송광사": 706 };
+
+// 유네스코 세계유산 "산사, 한국의 산지승원(Sansa, Buddhist Mountain Monasteries in Korea)" — 2018년 6월
+// 유네스코 세계유산위원회가 등재한 7개 사찰입니다. 문화재청·유네스코 공식 등재 명단 기준입니다.
+// (부석사·봉정사·선암사는 동명의 다른 사찰과 구분해, 실제 등재된 영주 부석사·안동 봉정사·순천 선암사로 연결)
+const UNESCO7_LIST = [
+  {n:"통도사", r:"경상남도 양산시"},
+  {n:"부석사", r:"경상북도 영주시"},
+  {n:"봉정사", r:"경상북도 안동시"},
+  {n:"법주사", r:"충청북도 보은군"},
+  {n:"마곡사", r:"충청남도 공주시"},
+  {n:"선암사", r:"전남광주통합특별시 순천시"},
+  {n:"대흥사", r:"전남광주통합특별시 해남군"},
+];
+const UNESCO7_ID_MAP = { "통도사": 1300, "부석사": 559, "봉정사": 553, "법주사": 448, "마곡사": 294, "선암사": 1498, "대흥사": 250 };
+
+// 성지순례 예절과 주의사항 — 특정 사찰의 개별 규정이 아니라, 여러 전통사찰이 공통으로 안내하는
+// 일반적인 예절·유의사항을 정리한 것입니다. 사찰별 세부 규정은 다를 수 있습니다.
+const PILGRIM_ETIQUETTE = [
+  {title:"사찰 입장 시", items:["일주문 통과 전 합장 후 입장","중앙 계단은 스님이 다니는 길이므로 옆으로 이동","경내에서는 조용히 (큰 소리로 대화 금지)"]},
+  {title:"법당 참배 시", items:["신발 벗고 입장 (신발장 이용)","법당 중앙은 피하고 좌우 측면으로 입장","삼배 올리기 (절하는 법을 모르면 합장만 해도 됩니다)","법당 내 사진 촬영 금지"]},
+  {title:"스님을 만났을 때", items:["합장하며 \"성불하십시오\" 인사","길을 비켜드리기","함부로 말을 걸지 않기"]},
+  {title:"공양(식사) 예절", items:["발우공양에 참여한다면 사전 교육 필수","음식을 남기지 않기","식사 중 대화 자제"]},
+];
+const PILGRIM_CAUTIONS = [
+  "금연·금주: 경내에서는 절대 금지",
+  "반려동물: 대부분 사찰 출입 금지",
+  "고성방가: 조용한 분위기 유지",
+  "함부로 만지지 않기: 불상, 탱화, 문화재는 눈으로만 감상",
+  "쓰레기: 본인이 가져온 쓰레기는 되가져가기",
+  "복장: 노출이 심한 옷, 짧은 반바지 지양",
+];
+
+// 계절별 추천 순례 코스 — 각 사찰이 위치한 지자체·문화재청 등이 널리 소개하는 대표적인 계절 명물을
+// 바탕으로 정리했습니다(구례 화엄사 홍매화, 고창 선운사 동백숲·꽃무릇, 정읍 내장산 단풍, 인제 백담계곡 등).
+// 개화·단풍 시기는 매년 날씨에 따라 달라질 수 있습니다.
+const SEASONAL_COURSES = [
+  {season:"봄 (3~5월)", icon:"🌸", temples:[
+    {n:"화엄사", feature:"홍매화"}, {n:"불국사", feature:"벚꽃"}, {n:"선운사", feature:"동백꽃"}
+  ], note:"봄꽃과 연등이 어우러진 풍경 · 부처님 오신 날 전후는 혼잡할 수 있습니다."},
+  {season:"여름 (6~8월)", icon:"☀️", temples:[
+    {n:"월정사", feature:"전나무 숲"}, {n:"내소사", feature:"전나무 숲"}, {n:"백담사", feature:"계곡"}
+  ], note:"시원한 계곡과 울창한 숲 · 폭염 시 오전 또는 늦은 오후 순례를 권장합니다."},
+  {season:"가을 (9~11월)", icon:"🍂", temples:[
+    {n:"법주사", feature:"단풍"}, {n:"내장사", feature:"단풍"}, {n:"선운사", feature:"꽃무릇"}
+  ], note:"전국 최고의 단풍·꽃무릇 명소 · 주말은 매우 혼잡하니 평일 방문을 추천합니다."},
+  {season:"겨울 (12~2월)", icon:"❄️", temples:[
+    {n:"월정사", feature:"설경"}, {n:"신흥사", feature:"설경"}, {n:"백담사", feature:"설경"}
+  ], note:"고요한 설경과 동안거 수행 분위기 · 방한용품 필수, 일부 사찰은 폐쇄될 수 있으니 확인하세요."},
+];
+// 계절별 코스에 등장하는 사찰 이름 → id 매핑(이름+지역 이중 확인, 동명이찰 배제)
+const SEASONAL_ID_MAP = { "화엄사": 1380, "불국사": 573, "선운사": 669, "월정사": 1053, "내소사": 161, "백담사": 397, "법주사": 448, "내장사": 176, "신흥사": 763 };
+
+// 혼자 조용히 명상하기 좋은 산사 — 이용자가 전달한 추천 설명을 요약해 정리했습니다. 사찰 위치는
+// 이 아카이브의 검증된 주소와 대조해 확인했으며, 그 과정에서 원 설명과 다른 점 2곳을 바로잡았습니다
+// (화운사는 안성이 아닌 용인시, 심원사는 고령이 아닌 성주군에 위치합니다 — 위키백과 등으로 확인).
+// 각 사찰의 개별 명상·템플스테이 프로그램 운영 여부와 명칭은 시점에 따라 달라질 수 있으니 방문 전
+// 사찰·템플스테이 홈페이지에서 다시 확인하시기 바랍니다.
+const MEDITATION_LIST = [
+  {n:"용주사", r:"경기도 화성시", desc:"서울 근교라 접근성이 좋으면서도 소나무 숲길이 우거져 고요합니다. 숲길을 천천히 걸으며 마음을 정리하기 좋은 곳입니다."},
+  {n:"화운사", r:"경기도 용인시", desc:"'시와 명상'을 함께하는 프로그램으로 알려져 있으며, 소박한 경내에서 내면을 들여다보기 좋습니다."},
+  {n:"심원사", r:"경상북도 성주군", desc:"가야산 자락 깊숙한 곳에 자리해 트레킹과 명상을 함께 할 수 있고, 법당 앞 작은 연못이 인상적입니다."},
+  {n:"서광사", r:"충청남도 서산시", desc:"인근 서산 마애삼존불·개심사와 함께 둘러볼 수 있는 조용한 사찰로, 이른 아침 방문이 특히 좋습니다."},
+  {n:"직지사", r:"경상북도 김천시", desc:"깊은 산속에 자리해 인위적인 소음이 적고, 계곡물 소리를 들으며 홀로 머물기 좋습니다."},
+  {n:"삼화사", r:"강원도 동해시", desc:"산과 바다를 함께 품고 있어 파도 소리와 숲 소리를 동시에 느낄 수 있습니다."},
+  {n:"갑사", r:"충청남도 공주시", desc:"계룡산 국립공원 안에 있어 사계절 풍경이 아름답고, 걷기 명상을 하기 좋은 숲길이 있습니다."},
+  {n:"쌍계사", r:"경상남도 하동군", desc:"지리산 자락, 계곡물 소리를 들으며 걷기 좋은 소박하고 조용한 사찰입니다."},
+  {n:"내소사", r:"전라북도 부안군", desc:"변산반도 국립공원 안에 있으며, 특히 가을 단풍길이 인상적입니다."},
+  {n:"송광사", r:"전라남도 순천시", desc:"숲길과 사찰이 조화를 이루는 천년 고찰로, 명상 초보자도 편하게 머물 수 있습니다."},
+];
+const MEDITATION_ID_MAP = { "용주사": 964, "화운사": 1506, "심원사": 797, "서광사": 620, "직지사": 1202, "삼화사": 607, "갑사": 13, "쌍계사": 808, "내소사": 161, "송광사": 706 };
+
 function templePhotoById(id){ const t = TEMPLES.find(x=>x.id===id); return t ? t.photo : null; }
 // 사찰음식 특화 사찰 목록도 동일한 방식(이름+지역 이중 확인)으로 안전하게 매칭된 것만 사진을 연결합니다.
 const FOOD_PHOTO_MAP = {
@@ -1575,9 +1704,63 @@ function viewRoutes(){
     <div class="motif-header">
       ${svgLatticeDecor()}
       <h1>${svgLotus(22)}순례 코스</h1>
-      <p class="muted">실제로 답사·검증된 도보 순례 동선(구간별 거리, 소요 시간 등)은 아직 확보하지 못해 임의로 만들어 게시하지 않습니다. 대신 한국불교문화사업단이 지정한 "한국전통사찰순례 33관음성지" 사찰 목록을 소개합니다.</p>
+      <p class="muted">실제로 답사·검증된 도보 순례 동선(구간별 거리, 소요 시간 등)은 아직 확보하지 못해 임의로 만들어 게시하지 않습니다. 대신 순례 전 알아두면 좋은 예절·계절 정보와, 공신력 있는 출처로 확인된 순례 사찰 목록을 소개합니다.</p>
     </div>
     <div class="dancheong-band"></div>
+
+    <h2 class="section-title">🙏 성지순례 예절과 주의사항</h2>
+    <div class="etiquette-block">
+      ${PILGRIM_ETIQUETTE.map(g => `
+        <div class="etiquette-group">
+          <h3>${esc(g.title)}</h3>
+          <ul>${g.items.map(it=>`<li>${esc(it)}</li>`).join('')}</ul>
+        </div>
+      `).join('')}
+    </div>
+    <div class="caution-block">
+      <h3>⚠️ 주의사항</h3>
+      <ol>${PILGRIM_CAUTIONS.map(c=>`<li>${esc(c)}</li>`).join('')}</ol>
+    </div>
+    <p class="source-note">위 예절·주의사항은 특정 사찰의 개별 규정이 아니라, 여러 전통사찰이 공통으로 안내하는 일반적인 예절을 정리한 것입니다. 사찰별 세부 규정은 다를 수 있으니 방문 시 현지 안내문을 함께 확인하시기 바랍니다.</p>
+
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">🗓️ 계절별 추천 순례 코스</h2>
+    <div class="seasonal-grid">
+      ${SEASONAL_COURSES.map(s => `
+        <div class="seasonal-card">
+          <h3>${s.icon} ${esc(s.season)}</h3>
+          <ul class="seasonal-temples">
+            ${s.temples.map(t=>{
+              const tid = SEASONAL_ID_MAP[t.n];
+              const label = `${esc(t.n)} <span class="feature">(${esc(t.feature)})</span>`;
+              return `<li>${tid ? `<a href="#/temple/${tid}">${label}</a>` : label}</li>`;
+            }).join('')}
+          </ul>
+          <p class="muted seasonal-note">${esc(s.note)}</p>
+        </div>
+      `).join('')}
+    </div>
+    <p class="source-note">위 계절별 명소는 각 사찰이 위치한 지자체·문화재청 등이 널리 소개하는 대표적인 계절 특징(예: 구례 화엄사 홍매화, 고창 선운사 동백숲·꽃무릇, 정읍 내장산 단풍, 인제 백담계곡)을 바탕으로 정리한 것이며, 실제 개화·단풍 시기는 매년 날씨에 따라 달라질 수 있습니다.</p>
+
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">🧘 혼자 조용히 명상하기 좋은 산사</h2>
+    <div class="meditation-grid">
+      ${MEDITATION_LIST.map(m=>{
+        const tid = MEDITATION_ID_MAP[m.n];
+        return `<a class="meditation-card" href="#/temple/${tid}">
+          <span class="med-name">${esc(m.n)}</span>
+          <span class="med-region muted">${esc(m.r)}</span>
+          <span class="med-desc">${esc(m.desc)}</span>
+        </a>`;
+      }).join('')}
+    </div>
+    <p class="source-note">위 목록은 조용히 홀로 머물기 좋은 산사로 소개된 설명을 요약해 정리한 것입니다. 사찰 위치는 이 아카이브의 검증된 주소와 대조했으며, 그 과정에서 확인된 오류 2곳을 바로잡았습니다(화운사는 안성이 아닌 용인시, 심원사는 고령이 아닌 성주군 소재). 개별 명상·템플스테이 프로그램의 운영 여부와 명칭은 시점에 따라 달라질 수 있으니 방문 전 사찰·템플스테이 홈페이지에서 다시 확인하시기 바랍니다.</p>
+
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">${svgLotus(18)} 한국전통사찰순례 33관음성지</h2>
     <div class="quote-block">"한국전통사찰순례 33관음성지"는 한국불교문화사업단이 관세음보살의 자비 정신을 기리기 위해 선정한 전국 33곳의 순례 사찰입니다. 아래 순서는 사업단이 소개한 번호를 그대로 따른 것이며, 실제 이동 순서나 경로를 의미하지 않습니다.</div>
     <a class="pdf-download-card" href="https://www.kbuddhism.com/images/2025templemap.pdf" target="_blank" rel="noopener">
       <span class="pdf-icon" aria-hidden="true">
@@ -1610,6 +1793,43 @@ function viewRoutes(){
       }).join('')}
     </div>
     <p class="source-note">출처: 한국불교문화사업단(kbuddhism.com) "한국전통사찰순례" 소개 페이지(2026년 9월 확인) · 위 33곳 명단이며, 구간별 실제 도보 경로·소요 시간 정보는 포함하지 않습니다. 33곳 모두 이 아카이브의 사찰 상세 페이지로 연결되며, 그중 사진이 확인된 곳(30곳)은 사진도 함께 보여줍니다. 템플스테이를 운영하는 곳(23곳)은 templestay.com 예약 페이지로 바로 연결됩니다. 동명이찰(같은 이름의 다른 사찰)은 주소로 대조해 정확한 사찰을 연결했습니다.</p>
+
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">💎 삼보사찰(三寶寺刹)</h2>
+    <div class="quote-block">삼보사찰은 불교의 세 가지 보배인 불보(佛寶)·법보(法寶)·승보(僧寶)를 각각 상징하는 것으로 전통적으로 함께 일컬어지는 3곳의 사찰입니다. 한국불교문화사업단의 공식 지정 목록이 아니라, 표준국어대사전 등에 실린 사전적 정의이자 오래된 불교 전통 분류입니다.</div>
+    <div class="sambo-grid">
+      ${SAMBO_LIST.map(s=>{
+        const tid = SAMBO_ID_MAP[s.n];
+        return `<a class="sambo-card" href="#/temple/${tid}">
+          <span class="sambo-role">${esc(s.role)}</span>
+          <span class="sambo-name">${esc(s.n)}</span>
+          <span class="sambo-region muted">${esc(s.r)}</span>
+          <span class="sambo-desc muted">${esc(s.desc)}</span>
+        </a>`;
+      }).join('')}
+    </div>
+    <p class="source-note">출처: 표준국어대사전 '삼보사찰' 항목 및 불교 전통 분류. 통도사·해인사·송광사 3곳 모두 이 아카이브의 사찰 상세 페이지로 연결됩니다.</p>
+
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">⛰️ 유네스코 세계유산 "산사, 한국의 산지승원"</h2>
+    <div class="quote-block">2018년 6월 유네스코 세계유산위원회가 등재한 한국의 산지 불교 사찰 7곳입니다. 오랜 세월 산속에서 신앙·수행·생활 공간을 유지해 온 종합적 승원 문화가 인정받아 세계유산으로 등재되었습니다.</div>
+    <div class="pilgrim-list">
+      ${UNESCO7_LIST.map((u,i)=>{
+        const tid = UNESCO7_ID_MAP[u.n];
+        const inner = `
+          <span class="pilgrim-num">${i+1}</span>
+          ${svgLotus(16)}
+          <span class="p-name">${esc(u.n)}</span>
+          <span class="p-region">${esc(u.r)}</span>
+          <span class="p-goto" aria-hidden="true">자세히 →</span>
+        `;
+        return `<div class="pilgrim-row"><a class="pilgrim-item" href="#/temple/${tid}">${inner}</a></div>`;
+      }).join('')}
+    </div>
+    <p class="source-note">출처: 유네스코 세계유산센터(UNESCO World Heritage Centre) "Sansa, Buddhist Mountain Monasteries in Korea"(2018년 등재) 및 문화재청 발표 자료. 7곳 모두 이 아카이브의 사찰 상세 페이지로 연결됩니다. (부석사·봉정사·선암사는 동명의 다른 사찰과 구분하여, 실제 세계유산으로 등재된 영주 부석사·안동 봉정사·순천 선암사로 정확히 연결했습니다.)</p>
+
     <a class="btn secondary" href="#/search" style="margin-top:18px; display:inline-block">그동안 사찰 목록을 검색해 보세요 →</a>
   `;
 }
