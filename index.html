@@ -453,6 +453,17 @@
   .meditation-card .med-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.65}
   .card-thumb{width:calc(100% + 32px); margin:-16px -16px 0 -16px; height:110px; object-fit:cover; display:block; border-radius:var(--radius) var(--radius) 0 0; background:var(--placeholder-bg)}
 
+  /* ---- 이야기(설화)가 있는 사찰 카드 ---- */
+  .story-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:10px}
+  .story-card{
+    display:flex; flex-direction:column; gap:6px; border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; background:var(--bg-raised); text-decoration:none;
+  }
+  .story-card:hover{border-color:var(--brand)}
+  .story-card .story-name{font-size:14.5px; font-weight:800; color:var(--ink)}
+  .story-card .story-region{font-size:12px; color:var(--ink-soft)}
+  .story-card .story-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.65}
+
   /* ---- 대표 사찰(교구본사) 카드 ---- */
   .headtemple-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:16px}
   .headtemple-card{
@@ -792,7 +803,7 @@ function viewHome(){
     <div class="timeline">
       <div class="timeline-item"><b>안내</b><p>소속 종단은 문화체육관광부 공식 명단(980개소, 2023.1.31 기준)과 이름·주소를 대조해 ${WITH_DENOM.toLocaleString()}곳(${(WITH_DENOM/TOTAL*100).toFixed(1)}%)에 반영했습니다. 자세한 방법론은 <a href="#/about">데이터 출처</a> 페이지를 참고해 주세요.</p></div>
       <div class="timeline-item"><b>국가유산</b><p>국가유산청 국가유산포털 "종목별 검색" 자료와 사찰명·소재지를 대조해 ${WITH_HERITAGE.toLocaleString()}곳(${(WITH_HERITAGE/TOTAL*100).toFixed(1)}%)에 국보·보물 등 국가유산 지정 현황을 반영했습니다.</p></div>
-      <div class="timeline-item"><b>템플스테이·순례 코스</b><p>템플스테이 운영 사찰 ${TEMPLESTAY_LIST.length}곳(templestay.com·한국불교문화사업단 기준), 한국전통사찰순례 33관음성지 ${PILGRIM33_LIST.length}곳을 비롯해 유네스코 세계유산 "산사, 한국의 산지승원" ${UNESCO7_LIST.length}곳, 총림 ${CHONGRIM_LIST.length}곳, 적멸보궁 ${JEOKMYEOL_LIST.length}곳, 계절별 추천 코스·명상하기 좋은 산사 등 다양한 테마별 순례 코스를 <a href="#/routes">순례 코스</a> 페이지에 반영했습니다.</p></div>
+      <div class="timeline-item"><b>템플스테이·순례 코스</b><p>템플스테이 운영 사찰 ${TEMPLESTAY_LIST.length}곳(templestay.com·한국불교문화사업단 기준), 한국전통사찰순례 33관음성지 ${PILGRIM33_LIST.length}곳을 비롯해 유네스코 세계유산 "산사, 한국의 산지승원" ${UNESCO7_LIST.length}곳, 총림 ${CHONGRIM_LIST.length}곳, 적멸보궁 ${JEOKMYEOL_LIST.length}곳, 이야기가 있는 사찰 ${STORY_LIST.length}곳, 계절별 추천 코스·명상하기 좋은 산사 등 다양한 테마별 순례 코스를 <a href="#/routes">순례 코스</a> 페이지에 반영했습니다.</p></div>
       <div class="timeline-item"><b>사진</b><p>위키미디어 커먼즈(CC 라이선스)·공공누리 등 재사용이 허가된 출처가 확인된 ${PHOTO_TEMPLES.length.toLocaleString()}곳에만 사진을 표시합니다. 저작권이 확인되지 않은 사진은 직접 게시하지 않으며, 아직 확보되지 않은 사찰은 사진 없이 안내됩니다.</p></div>
     </div>
 
@@ -1058,6 +1069,9 @@ function viewDetail(id){
   }
   if(Object.values(MEDITATION_ID_MAP).includes(t.id)){
     relatedBadges.push(`<a class="related-badge" href="#/routes">🧘 혼자 명상하기 좋은 산사 <span class="rb-ext">순례 코스 보기 →</span></a>`);
+  }
+  if(Object.values(STORY_ID_MAP).includes(t.id)){
+    relatedBadges.push(`<a class="related-badge" href="#/routes">📖 이야기가 있는 사찰 <span class="rb-ext">순례 코스 보기 →</span></a>`);
   }
   const foodName = Object.keys(FOOD_ID_MAP).find(n => FOOD_ID_MAP[n] === t.id);
   if(foodName){
@@ -1651,6 +1665,21 @@ const JEOKMYEOL_LIST = [
 ];
 const JEOKMYEOL_ID_MAP = { "통도사": 1300, "봉정암": 1446, "법흥사": 457, "정암사": 1148, "건봉사": 1497, "도리사": 263, "용연사": 962 };
 
+// 이야기(설화)가 있는 사찰 — 유래·연혁에 창건 설화·전설이 뚜렷하게 담겨 있는 사찰을 골랐습니다.
+// 각 사찰 상세페이지의 "유래·연혁"(정부 데이터 기준, 이 아카이브가 확인한 내용 그대로)을 바탕으로
+// 이야기를 짧게 요약했습니다. 설화는 전승되는 이야기이며 역사적 사실 여부와는 별개입니다.
+const STORY_LIST = [
+  {n:"백양사", r:"전남광주통합특별시 장성군", desc:"환성지안 선사의 독경을 듣던 흰 양이 꿈에 나타나 사람으로 환생하게 됐다고 감사 인사를 전했다는 전설에서 이름이 유래했습니다."},
+  {n:"희방사", r:"경상북도 영주시", desc:"호랑이와의 인연으로 세워졌다는 독특한 창건 설화가 전하는 절로, 신라 선덕여왕 때 두운조사가 창건했습니다."},
+  {n:"관룡사", r:"경상남도 창녕군", desc:"화왕산 정상 연못에 살던 용이 구름을 타고 하늘로 올라가는 것을 보고 절 이름을 관룡사라 지었다고 전합니다."},
+  {n:"개목사", r:"경상북도 안동시", desc:"안동에 소경이 많다는 말을 들은 맹사성이 절 이름을 '눈을 뜨다'라는 뜻의 개목사로 바꾸자, 부처님의 영험으로 눈병이 나았다는 설화가 전합니다."},
+  {n:"계승사", r:"경상남도 고성군", desc:"고려 말 이성계가 왜구 토벌길에 이 절에 머물며 조선 건국의 꿈을 키웠다는 이야기와, 지나친 욕심에 공양미가 나오던 샘물이 마른 약수로 변했다는 전설이 함께 전합니다."},
+  {n:"동학사", r:"충청남도 공주시", desc:"동쪽에 학을 닮은 바위가 있어 이름 붙었다는 전설과 함께, 신라 유민 유차달이 신라 시조와 충신 박제상을 기리기 위해 절을 세웠다는 이야기가 전합니다."},
+  {n:"불굴사", r:"경상북도 경산시", desc:"큰 산사태로 절이 무너진 뒤, 송광사의 한 노스님이 꿈에 세 번이나 계시를 받고 찾아와 다시 일으켜 세웠다는 이야기가 전합니다."},
+  {n:"축서사", r:"경상북도 봉화군", desc:"의상대사가 하룻밤 묵던 중 지금의 절터에서 밝은 빛이 비치는 것을 보고 그 자리에 절을 세웠다고 전하며, 절 이름의 '독수리'는 문수보살의 화현을 상징한다고 합니다."},
+];
+const STORY_ID_MAP = { "백양사":416, "희방사":1496, "관룡사":54, "개목사":17, "계승사":34, "동학사":284, "불굴사":574, "축서사":1278 };
+
 // 성지순례 예절과 주의사항 — 특정 사찰의 개별 규정이 아니라, 여러 전통사찰이 공통으로 안내하는
 // 일반적인 예절·유의사항을 정리한 것입니다. 사찰별 세부 규정은 다를 수 있습니다.
 const PILGRIM_ETIQUETTE = [
@@ -1901,6 +1930,24 @@ function viewRoutes(){
       }).join('')}
     </div>
     <p class="source-note">출처: 위키백과 "적멸보궁" 항목 및 각 사찰·지자체 소개자료(2026년 9월 확인). 1~5번이 전통적인 "5대 적멸보궁", 6~8번을 더하면 "8대 적멸보궁"으로 불립니다. 평창 오대산 상원사(2번)는 이 아카이브의 전통사찰 데이터(문화체육관광부 등록 기준)에 월정사와 별도 항목이 없어 상세페이지로 연결하지 않았습니다.</p>
+
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">📖 이야기가 있는 사찰</h2>
+    <div class="quote-block">전국 사찰마다 창건 설화나 전설 한두 가지쯤은 전해 내려옵니다. 그중에서도 유래·연혁에 이야기가 특히 뚜렷하게 남아 있는 사찰 8곳을 골라봤습니다.</div>
+    <div class="story-grid">
+      ${STORY_LIST.map(s=>{
+        const tid = STORY_ID_MAP[s.n];
+        const photo = tid ? templePhotoById(tid) : null;
+        return `<a class="story-card" href="#/temple/${tid}">
+          ${photo ? `<img class="card-thumb" src="${esc(photo)}" alt="${esc(s.n)}" loading="lazy">` : ''}
+          <span class="story-name">${esc(s.n)}</span>
+          <span class="story-region muted">${esc(s.r)}</span>
+          <span class="story-desc">${esc(s.desc)}</span>
+        </a>`;
+      }).join('')}
+    </div>
+    <p class="source-note">각 사찰 상세페이지의 "유래·연혁" 항목(문화체육관광부 등록 정보 기준, 이 아카이브가 원문 그대로 반영한 내용)에서 이야기가 뚜렷한 곳을 골라 짧게 요약했습니다. 설화·전설은 예로부터 전해 내려오는 이야기이며, 역사적 사실 여부를 이 아카이브가 별도로 검증한 것은 아닙니다. 8곳 모두 이 아카이브의 사찰 상세 페이지로 연결됩니다.</p>
 
     <a class="btn secondary" href="#/search" style="margin-top:18px; display:inline-block">그동안 사찰 목록을 검색해 보세요 →</a>
   `;
