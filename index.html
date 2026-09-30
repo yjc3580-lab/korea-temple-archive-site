@@ -803,7 +803,7 @@ function viewHome(){
     <div class="timeline">
       <div class="timeline-item"><b>안내</b><p>소속 종단은 문화체육관광부 공식 명단(980개소, 2023.1.31 기준)과 이름·주소를 대조해 ${WITH_DENOM.toLocaleString()}곳(${(WITH_DENOM/TOTAL*100).toFixed(1)}%)에 반영했습니다. 자세한 방법론은 <a href="#/about">데이터 출처</a> 페이지를 참고해 주세요.</p></div>
       <div class="timeline-item"><b>국가유산</b><p>국가유산청 국가유산포털 "종목별 검색" 자료와 사찰명·소재지를 대조해 ${WITH_HERITAGE.toLocaleString()}곳(${(WITH_HERITAGE/TOTAL*100).toFixed(1)}%)에 국보·보물 등 국가유산 지정 현황을 반영했습니다.</p></div>
-      <div class="timeline-item"><b>템플스테이·순례 코스</b><p>템플스테이 운영 사찰 ${TEMPLESTAY_LIST.length}곳(templestay.com·한국불교문화사업단 기준), 한국전통사찰순례 33관음성지 ${PILGRIM33_LIST.length}곳을 비롯해 유네스코 세계유산 "산사, 한국의 산지승원" ${UNESCO7_LIST.length}곳, 총림 ${CHONGRIM_LIST.length}곳, 적멸보궁 ${JEOKMYEOL_LIST.length}곳, 이야기가 있는 사찰 ${STORY_LIST.length}곳, 계절별 추천 코스·명상하기 좋은 산사 등 다양한 테마별 순례 코스를 <a href="#/routes">순례 코스</a> 페이지에 반영했습니다.</p></div>
+      <div class="timeline-item"><b>템플스테이·순례 코스</b><p>템플스테이 운영 사찰 ${TEMPLESTAY_LIST.length}곳(templestay.com·한국불교문화사업단 기준), 한국전통사찰순례 33관음성지 ${PILGRIM33_LIST.length}곳을 비롯해 유네스코 세계유산 "산사, 한국의 산지승원" ${UNESCO7_LIST.length}곳, 이야기가 있는 사찰 ${STORY_LIST.length}곳, 계절별 추천 코스·명상하기 좋은 산사 등 다양한 테마별 순례 코스를 <a href="#/routes">순례 코스</a> 페이지에 반영했습니다.</p></div>
       <div class="timeline-item"><b>사진</b><p>위키미디어 커먼즈(CC 라이선스)·공공누리 등 재사용이 허가된 출처가 확인된 ${PHOTO_TEMPLES.length.toLocaleString()}곳에만 사진을 표시합니다. 저작권이 확인되지 않은 사진은 직접 게시하지 않으며, 아직 확보되지 않은 사찰은 사진 없이 안내됩니다.</p></div>
     </div>
 
@@ -1893,46 +1893,6 @@ function viewRoutes(){
 
     <div class="dancheong-band"></div>
 
-    <h2 class="section-title">🏯 총림(叢林)</h2>
-    <div class="quote-block">참선수행 전문 교육기관인 선원(禪院), 경전 교육기관인 강원(講院), 계율 교육기관인 율원(律院)을 모두 갖춘 종합수행도량을 대한불교조계종이 "총림"으로 지정합니다. 2012~2013년에는 8곳이 지정되어 있었으나, 이후 운영 실사에서 고불총림 백양사·쌍계총림 쌍계사(2023~2024년 해제)·팔공총림 동화사(2025년 3월 해제)가 차례로 총림 지위를 잃어 2026년 9월 기준 5곳만 남아 있습니다.</div>
-    <div class="pilgrim-list">
-      ${CHONGRIM_LIST.map((c,i)=>{
-        const tid = CHONGRIM_ID_MAP[c.n];
-        const photo = tid ? templePhotoById(tid) : null;
-        const inner = `
-          <span class="pilgrim-num">${i+1}</span>
-          ${photo ? `<img class="pilgrim-thumb" src="${esc(photo)}" alt="${esc(c.n)}" loading="lazy">` : svgLotus(16)}
-          <span class="p-name">${esc(c.role)} · ${esc(c.n)}</span>
-          <span class="p-region">${esc(c.r)}</span>
-          <span class="p-goto" aria-hidden="true">자세히 →</span>
-        `;
-        return `<div class="pilgrim-row"><a class="pilgrim-item" href="#/temple/${tid}">${inner}</a></div>`;
-      }).join('')}
-    </div>
-    <p class="source-note">출처: 조계종 중앙종회 의결 보도 등 교계 언론 확인(2026년 9월 확인). 2012~2013년 지정된 8곳 중 고불총림 백양사·쌍계총림 쌍계사·팔공총림 동화사 3곳은 이후 총림 지위가 해제되어, 현재는 5곳만 총림입니다. 5곳 모두 이 아카이브의 사찰 상세 페이지로 연결됩니다.</p>
-
-    <div class="dancheong-band"></div>
-
-    <h2 class="section-title">🪷 적멸보궁(寂滅寶宮)</h2>
-    <div class="quote-block">적멸보궁은 부처님의 진신사리(眞身舍利)를 모셔 불상 대신 참배하는 전각입니다. 신라 자장율사가 당에서 모셔온 사리를 나눠 봉안했다고 전하는 5곳을 흔히 "5대 적멸보궁"이라 부르고, 사리가 봉안된 것으로 함께 꼽히는 3곳을 더해 "8대 적멸보궁"으로도 부릅니다.</div>
-    <div class="pilgrim-list">
-      ${JEOKMYEOL_LIST.map((j,i)=>{
-        const tid = JEOKMYEOL_ID_MAP[j.n];
-        const photo = tid ? templePhotoById(tid) : null;
-        const inner = `
-          <span class="pilgrim-num">${i+1}</span>
-          ${photo ? `<img class="pilgrim-thumb" src="${esc(photo)}" alt="${esc(j.n)}" loading="lazy">` : svgLotus(16)}
-          <span class="p-name">${esc(j.n)} <span class="feature">(${esc(j.mt)})</span></span>
-          <span class="p-region">${esc(j.r)}</span>
-          ${tid ? `<span class="p-goto" aria-hidden="true">자세히 →</span>` : ''}
-        `;
-        return tid ? `<div class="pilgrim-row"><a class="pilgrim-item" href="#/temple/${tid}">${inner}</a></div>` : `<div class="pilgrim-row"><div class="pilgrim-item" style="cursor:default">${inner}</div></div>`;
-      }).join('')}
-    </div>
-    <p class="source-note">출처: 위키백과 "적멸보궁" 항목 및 각 사찰·지자체 소개자료(2026년 9월 확인). 1~5번이 전통적인 "5대 적멸보궁", 6~8번을 더하면 "8대 적멸보궁"으로 불립니다. 평창 오대산 상원사(2번)는 이 아카이브의 전통사찰 데이터(문화체육관광부 등록 기준)에 월정사와 별도 항목이 없어 상세페이지로 연결하지 않았습니다.</p>
-
-    <div class="dancheong-band"></div>
-
     <h2 class="section-title">📖 이야기가 있는 사찰</h2>
     <div class="quote-block">전국 사찰마다 창건 설화나 전설 한두 가지쯤은 전해 내려옵니다. 그중에서도 유래·연혁에 이야기가 특히 뚜렷하게 남아 있는 사찰 8곳을 골라봤습니다.</div>
     <div class="story-grid">
@@ -2206,6 +2166,47 @@ function viewCulture(){
     </div>
     <p class="source-note">사진은 이 용어를 실제로 확인할 수 있는 대표 사찰 한 곳을 예시로 보여드리는 것이며, 사찰마다 전각의 위치·형태·구성은 다를 수 있습니다. 모두 위키미디어 커먼즈(Wikimedia Commons)에 CC(자유이용) 라이선스로 공개된 사진만 사용했고, 사진마다 출처·저작자·라이선스를 표기했습니다.</p>
 
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">🏯 총림(叢林)</h2>
+    <div class="quote-block">참선수행 전문 교육기관인 선원(禪院), 경전 교육기관인 강원(講院), 계율 교육기관인 율원(律院)을 모두 갖춘 종합수행도량을 대한불교조계종이 "총림"으로 지정합니다. 2012~2013년에는 8곳이 지정되어 있었으나, 이후 운영 실사에서 고불총림 백양사·쌍계총림 쌍계사(2023~2024년 해제)·팔공총림 동화사(2025년 3월 해제)가 차례로 총림 지위를 잃어 2026년 9월 기준 5곳만 남아 있습니다.</div>
+    <div class="pilgrim-list">
+      ${CHONGRIM_LIST.map((c,i)=>{
+        const tid = CHONGRIM_ID_MAP[c.n];
+        const photo = tid ? templePhotoById(tid) : null;
+        const inner = `
+          <span class="pilgrim-num">${i+1}</span>
+          ${photo ? `<img class="pilgrim-thumb" src="${esc(photo)}" alt="${esc(c.n)}" loading="lazy">` : svgLotus(16)}
+          <span class="p-name">${esc(c.role)} · ${esc(c.n)}</span>
+          <span class="p-region">${esc(c.r)}</span>
+          <span class="p-goto" aria-hidden="true">자세히 →</span>
+        `;
+        return `<div class="pilgrim-row"><a class="pilgrim-item" href="#/temple/${tid}">${inner}</a></div>`;
+      }).join('')}
+    </div>
+    <p class="source-note">출처: 조계종 중앙종회 의결 보도 등 교계 언론 확인(2026년 9월 확인). 2012~2013년 지정된 8곳 중 고불총림 백양사·쌍계총림 쌍계사·팔공총림 동화사 3곳은 이후 총림 지위가 해제되어, 현재는 5곳만 총림입니다. 5곳 모두 이 아카이브의 사찰 상세 페이지로 연결됩니다.</p>
+
+    <div class="dancheong-band"></div>
+
+    <h2 class="section-title">🪷 적멸보궁(寂滅寶宮)</h2>
+    <div class="quote-block">적멸보궁은 부처님의 진신사리(眞身舍利)를 모셔 불상 대신 참배하는 전각입니다. 신라 자장율사가 당에서 모셔온 사리를 나눠 봉안했다고 전하는 5곳을 흔히 "5대 적멸보궁"이라 부르고, 사리가 봉안된 것으로 함께 꼽히는 3곳을 더해 "8대 적멸보궁"으로도 부릅니다.</div>
+    <div class="pilgrim-list">
+      ${JEOKMYEOL_LIST.map((j,i)=>{
+        const tid = JEOKMYEOL_ID_MAP[j.n];
+        const photo = tid ? templePhotoById(tid) : null;
+        const inner = `
+          <span class="pilgrim-num">${i+1}</span>
+          ${photo ? `<img class="pilgrim-thumb" src="${esc(photo)}" alt="${esc(j.n)}" loading="lazy">` : svgLotus(16)}
+          <span class="p-name">${esc(j.n)} <span class="feature">(${esc(j.mt)})</span></span>
+          <span class="p-region">${esc(j.r)}</span>
+          ${tid ? `<span class="p-goto" aria-hidden="true">자세히 →</span>` : ''}
+        `;
+        return tid ? `<div class="pilgrim-row"><a class="pilgrim-item" href="#/temple/${tid}">${inner}</a></div>` : `<div class="pilgrim-row"><div class="pilgrim-item" style="cursor:default">${inner}</div></div>`;
+      }).join('')}
+    </div>
+    <p class="source-note">출처: 위키백과 "적멸보궁" 항목 및 각 사찰·지자체 소개자료(2026년 9월 확인). 1~5번이 전통적인 "5대 적멸보궁", 6~8번을 더하면 "8대 적멸보궁"으로 불립니다. 평창 오대산 상원사(2번)는 이 아카이브의 전통사찰 데이터(문화체육관광부 등록 기준)에 월정사와 별도 항목이 없어 상세페이지로 연결하지 않았습니다.</p>
+
+    
     <div class="section-lead" style="margin-top:38px">${svgLotus(18)}대한불교조계종 25교구 본사</div>
     <p class="muted">전국 사찰을 관할 구역(교구)으로 나눈 대한불교조계종의 조직에서, 각 교구를 대표하는 중심 사찰(본사) 25곳입니다. 사진·연혁은 이 아카이브가 사찰마다 보유한 기존 정보를 그대로 이어서 보여드리며, 이 페이지를 위해 새로 조사해 지어낸 내용은 없습니다.</p>
     <div class="headtemple-grid">
