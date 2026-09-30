@@ -552,6 +552,11 @@ function homeGallery(n){
   const rest = homePick().rest;
   return rest.slice(0, Math.min(n, rest.length));
 }
+// 새로고침 없이 "오늘의 사찰"·갤러리를 다른 사찰들로 다시 뽑는 버튼용 함수
+function refreshHomePicks(){
+  _homePickCache = null;
+  render();
+}
 // 지역(도)별 등록 사찰 수 — 태그 클라우드 크기 계산에 사용
 function regionCounts(){
   const map = {};
@@ -762,6 +767,7 @@ function viewHome(){
           </a>
         `).join('') : `<p class="muted" style="align-self:center">추가로 표시할 사진이 아직 없습니다.</p>`}
       </div>
+      ${gallery.length ? `<button class="btn secondary" type="button" style="margin:14px auto 0; display:block" onclick="refreshHomePicks()">🔄 다른 사찰 보기</button>` : ''}
     </div>
 
     ${divider}
