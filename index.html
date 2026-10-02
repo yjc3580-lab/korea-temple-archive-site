@@ -2168,6 +2168,25 @@ function viewCulture(){
 
     <div class="dancheong-band"></div>
 
+    <h2 class="section-title">💎 삼보사찰(三寶寺刹)</h2>
+    <div class="quote-block">삼보사찰은 불교의 세 가지 보배인 불보(佛寶)·법보(法寶)·승보(僧寶)를 각각 상징하는 것으로 전통적으로 함께 일컬어지는 3곳의 사찰입니다. 한국불교문화사업단의 공식 지정 목록이 아니라, 표준국어대사전 등에 실린 사전적 정의이자 오래된 불교 전통 분류입니다.</div>
+    <div class="sambo-grid">
+      ${SAMBO_LIST.map(s=>{
+        const tid = SAMBO_ID_MAP[s.n];
+        const photo = tid ? templePhotoById(tid) : null;
+        return `<a class="sambo-card" href="#/temple/${tid}">
+          ${photo ? `<img class="card-thumb" src="${esc(photo)}" alt="${esc(s.n)}" loading="lazy">` : ''}
+          <span class="sambo-role">${esc(s.role)}</span>
+          <span class="sambo-name">${esc(s.n)}</span>
+          <span class="sambo-region muted">${esc(s.r)}</span>
+          <span class="sambo-desc muted">${esc(s.desc)}</span>
+        </a>`;
+      }).join('')}
+    </div>
+    <p class="source-note">출처: 표준국어대사전 '삼보사찰' 항목 및 불교 전통 분류. 통도사·해인사·송광사 3곳 모두 이 아카이브의 사찰 상세 페이지로 연결됩니다.</p>
+
+    <div class="dancheong-band"></div>
+
     <h2 class="section-title">🏯 총림(叢林)</h2>
     <div class="quote-block">참선수행 전문 교육기관인 선원(禪院), 경전 교육기관인 강원(講院), 계율 교육기관인 율원(律院)을 모두 갖춘 종합수행도량을 대한불교조계종이 "총림"으로 지정합니다. 2012~2013년에는 8곳이 지정되어 있었으나, 이후 운영 실사에서 고불총림 백양사·쌍계총림 쌍계사(2023~2024년 해제)·팔공총림 동화사(2025년 3월 해제)가 차례로 총림 지위를 잃어 2026년 9월 기준 5곳만 남아 있습니다.</div>
     <div class="pilgrim-list">
@@ -2215,24 +2234,7 @@ function viewCulture(){
     <p class="source-note">교구 번호·본사명은 대한불교조계종 종단 조직(교구본사) 정보를 기준으로 정리했습니다. 사찰별 주소·창건연대·연혁·사진 출처는 각 상세 페이지 하단의 "데이터 출처"를 참고해 주세요.</p>
 
 
-    <div class="dancheong-band"></div>
-
-    <h2 class="section-title">💎 삼보사찰(三寶寺刹)</h2>
-    <div class="quote-block">삼보사찰은 불교의 세 가지 보배인 불보(佛寶)·법보(法寶)·승보(僧寶)를 각각 상징하는 것으로 전통적으로 함께 일컬어지는 3곳의 사찰입니다. 한국불교문화사업단의 공식 지정 목록이 아니라, 표준국어대사전 등에 실린 사전적 정의이자 오래된 불교 전통 분류입니다.</div>
-    <div class="sambo-grid">
-      ${SAMBO_LIST.map(s=>{
-        const tid = SAMBO_ID_MAP[s.n];
-        const photo = tid ? templePhotoById(tid) : null;
-        return `<a class="sambo-card" href="#/temple/${tid}">
-          ${photo ? `<img class="card-thumb" src="${esc(photo)}" alt="${esc(s.n)}" loading="lazy">` : ''}
-          <span class="sambo-role">${esc(s.role)}</span>
-          <span class="sambo-name">${esc(s.n)}</span>
-          <span class="sambo-region muted">${esc(s.r)}</span>
-          <span class="sambo-desc muted">${esc(s.desc)}</span>
-        </a>`;
-      }).join('')}
-    </div>
-    <p class="source-note">출처: 표준국어대사전 '삼보사찰' 항목 및 불교 전통 분류. 통도사·해인사·송광사 3곳 모두 이 아카이브의 사찰 상세 페이지로 연결됩니다.</p>
+    
   `;
 }
 
