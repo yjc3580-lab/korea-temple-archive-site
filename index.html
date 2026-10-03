@@ -1084,7 +1084,7 @@ function viewDetail(id){
     ${t.photo ? `<figure class="temple-photo">
       <img src="${esc(t.photo)}" alt="${esc(t.name)} 사진" loading="lazy">
       <figcaption class="muted">
-        사진: <a href="${esc(t.photoFileUrl)}" target="_blank" rel="noopener">Wikimedia Commons</a>
+        사진: <a href="${esc(t.photoFileUrl)}" target="_blank" rel="noopener">${esc(/commons\.wikimedia\.org/.test(t.photoFileUrl||'')?'Wikimedia Commons':(/heritage\.go\.kr|khs\.go\.kr/.test(t.photoFileUrl||'')?'국가유산청 국가유산포털':((t.photoLicense||'').indexOf('사찰 공식')===0?'사찰 공식 홈페이지('+String(t.photoFileUrl||'').replace(/^https?:\/\//,'').replace(/\/.*$/,'')+')':'Wikimedia Commons')))}</a>
         ${t.photoArtist ? ` · ⓒ ${esc(t.photoArtist)}` : ''}
         ${t.photoLicense ? ` · 라이선스: ${esc(t.photoLicense)}` : ''}
         · 사찰명이 같은 다른 사찰과 혼동되지 않도록 확인했으나, 정확한 실제 사진이 아닐 가능성이 있습니다. 오류 제보 환영합니다.
@@ -1571,7 +1571,7 @@ const TS_PHOTO_MAP = {"골굴사":1500,"법륜사":1501,"감산사":1523,"불갑
   "능가사": 178,
 "문수암":1499,"묘적사":337,"봉인사":1502,"사나사":592,"수원사":734,"육지장사":1504,"정토사":1505,"화운사":1506,"망경산사":1507,"보현사":516,"삼운사":1509,"용연사":961,"현덕사":1510,"연등국제선원":1511,"지장정사":1513,"한국문화연수원":1515,"영평사":901,"도림사":1516,"내원정사":174,"홍법사":1517,"다솔사":182,"대광사(창원)":1518,"자비선사":1519,"장육사":1118,"축서사":1278,"귀정사":109,"금룡사":1521,"백제사":1522,"청련사(강화)":1252,
   // 2026-09-27 배치 추가로 사진이 생긴 사찰 반영(운영 사찰 목록 썸네일 표시용)
-"영랑사":871,};
+"영랑사":871,"약수사":837,"화암사(고성)":1373,"정혜사":1156,"서고사":619,"연운사":1527,"중흥사":1190,};
 // 순례 33곳은 사진 유무와 관계없이, 이름+지역(시/군/구 단위)으로 동명이찰을 가려낸 뒤
 // 이 사이트가 이미 보유한 사찰 상세 레코드(TEMPLES)의 id로 전부 연결합니다. 사진은 있으면 같이 보여주고,
 // 없으면 상세 페이지에서 "정보 없음"을 그대로 보여줍니다(사진을 새로 만들어 넣지 않습니다).
