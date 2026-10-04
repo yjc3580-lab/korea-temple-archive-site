@@ -2349,7 +2349,7 @@ function viewTop100(){
     Object.keys(labels).forEach(k=>{ if(r.b[k]) chips.push('<span class="top-chip gold">' + labels[k] + ' +' + r.b[k] + '</span>'); });
     return '<a class="top-row" href="#/temple/' + r.id + '"><span class="top-rank">' + r.rank + '</span>' + thumb + '<span class="top-main"><b>' + esc(r.name) + '</b><span class="top-region">' + esc(region) + '</span><span class="top-tags">' + chips.join('') + '</span></span><span class="top-score"><b>' + r.score + '</b>점</span></a>';
   }).join('');
-  return '<h1>100대 문화유산 명찰</h1>' +
+  return '<h1>문화유산 100대 명찰</h1>' +
     '<p class="muted">&ldquo;한국 100대 명찰&rdquo;이라는 공식 목록은 없습니다. 이 페이지는 이 아카이브에 담긴 지정 문화유산(국가·시도가 법에 따라 보호하기로 정한 문화재) 수와 사찰의 지위를 점수로 바꿔 줄을 세운 것입니다. 유명한 정도나 신앙에서의 중요성을 재는 순위가 아닙니다.</p>' +
     '<section class="block top-formula"><h2 style="margin-top:0">점수 계산 방법</h2>' +
     '<p><b>문화유산 점수</b> &mdash; 국보 1건당 5점, 보물 1건당 3점, 사적·명승·천연기념물·국가민속문화유산·국가무형유산·국가등록문화유산 등 그 외 국가지정 1건당 2점.</p>' +
