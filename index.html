@@ -229,6 +229,8 @@
   /* ---- 현판형 오늘의 사찰 + 갤러리 ---- */
   .today-row{display:grid; grid-template-columns:280px 1fr; gap:16px; margin:22px 0}
   @media (max-width:700px){ .today-row{grid-template-columns:1fr} }
+  .refresh-btn{grid-column:2; justify-self:end; margin:0}
+  @media (max-width:700px){ .refresh-btn{grid-column:1; justify-self:center} }
   .today-plate{
     display:flex; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--bg-raised);
   }
@@ -236,6 +238,9 @@
   .plate-body{padding:18px 16px; display:flex; flex-direction:column; gap:6px}
   .plate-label{font-size:11.5px; font-weight:700; color:var(--gold); letter-spacing:.03em}
   .plate-body h2{margin:2px 0 0; font-size:22px; color:var(--ink)}
+  .plate-title{display:flex; align-items:center; gap:12px}
+  .plate-title h2{margin:0}
+  .plate-thumb{flex:none; width:56px; height:56px; border-radius:10px; object-fit:cover; background:var(--placeholder-bg)}
   .plate-body .plate-meta{font-size:12.5px; color:var(--ink-soft); margin-bottom:8px}
   .plate-body .btn{align-self:flex-start; margin-top:auto}
   .gallery-strip{
@@ -337,6 +342,7 @@
   .top-list{display:flex; flex-direction:column; gap:8px; margin-top:14px}
   .top-row{display:flex; align-items:center; gap:12px; padding:11px 14px; border:1px solid var(--line); border-radius:10px; background:var(--bg-raised)}
   .top-row:hover{border-color:var(--brand)}
+  .top-row .pilgrim-thumb{width:48px; height:48px}
   .top-rank{flex:none; min-width:34px; text-align:center; font-weight:800; font-size:15px; color:var(--brand-dark); font-variant-numeric:tabular-nums}
   .top-main{flex:1; min-width:0; display:flex; flex-wrap:wrap; gap:3px 10px; align-items:baseline}
   .top-main b{font-size:15.5px}
@@ -504,7 +510,7 @@
     <a href="#/templestay" data-r="templestay">템플스테이</a>
     <a href="#/templefood" data-r="templefood">사찰음식</a>
     <a href="#/culture" data-r="culture">불교 상식·교구본사</a>
-    <a href="#/top100" data-r="top100">100대 명찰</a>
+    <a href="#/top100" data-r="top100">100대 문화유산 명찰</a>
     <a href="#/visitmap" data-r="visitmap">방문사찰지도</a>
     <a href="#/about" data-r="about">데이터 출처</a>
   </nav>
@@ -769,7 +775,7 @@ function viewHome(){
           <div class="plate-bar"></div>
           <div class="plate-body">
             <span class="plate-label">오늘의 사찰</span>
-            <h2>${esc(t.name)}</h2>
+            <div class="plate-title">${t.photo ? `<img class="plate-thumb" src="${esc(t.photo)}" alt="${esc(t.name)}">` : ''}<h2>${esc(t.name)}</h2></div>
             <span class="plate-meta">${esc(t.province||'')}${t.founded?` · ${esc(t.founded)} 창건`:''}${t.denom?` · ${esc(t.denom)}`:''}</span>
             <a class="btn secondary" href="#/temple/${t.id}">자세히 보기 →</a>
           </div>
@@ -793,7 +799,7 @@ function viewHome(){
           </a>
         `).join('') : `<p class="muted" style="align-self:center">추가로 표시할 사진이 아직 없습니다.</p>`}
       </div>
-      ${gallery.length ? `<button class="btn secondary" type="button" style="margin:14px auto 0; display:block" onclick="refreshHomePicks()">🔄 다른 사찰 보기</button>` : ''}
+      ${gallery.length ? `<button class="btn secondary refresh-btn" type="button" onclick="refreshHomePicks()">🔄 다른 사찰 보기</button>` : ''}
     </div>
 
     ${divider}
@@ -1726,16 +1732,16 @@ const PILGRIM_CAUTIONS = [
 // 바탕으로 정리했습니다(구례 화엄사 홍매화, 고창 선운사 동백숲·꽃무릇, 정읍 내장산 단풍, 인제 백담계곡 등).
 // 개화·단풍 시기는 매년 날씨에 따라 달라질 수 있습니다.
 const SEASONAL_COURSES = [
-  {season:"봄 (3~5월)", icon:"🌸", temples:[
+  {season:"봄 (3~5월)", icon:"🌸", photo:{url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/Plum_blossom.jpg/960px-Plum_blossom.jpg",alt:"홍매화",cap:"홍매화(특정 사찰 사진이 아님)",artist:"hyemin76 (Pixabay)",lic:"CC0",page:"https://commons.wikimedia.org/wiki/File:Plum_blossom.jpg"}, temples:[
     {n:"화엄사", feature:"홍매화"}, {n:"불국사", feature:"벚꽃"}, {n:"선운사", feature:"동백꽃"}
   ], note:"봄꽃과 연등이 어우러진 풍경 · 부처님 오신 날 전후는 혼잡할 수 있습니다."},
-  {season:"여름 (6~8월)", icon:"☀️", temples:[
+  {season:"여름 (6~8월)", icon:"☀️", photo:{url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/%EB%B0%B1%EB%8B%B4%EC%82%AC1.JPG/960px-%EB%B0%B1%EB%8B%B4%EC%82%AC1.JPG",alt:"백담사",cap:"백담사",artist:"한국불교문화사업단",lic:"CC BY-SA 4.0",page:"https://commons.wikimedia.org/wiki/File:%EB%B0%B1%EB%8B%B4%EC%82%AC1.JPG"}, temples:[
     {n:"월정사", feature:"전나무 숲"}, {n:"내소사", feature:"전나무 숲"}, {n:"백담사", feature:"계곡"}
   ], note:"시원한 계곡과 울창한 숲 · 폭염 시 오전 또는 늦은 오후 순례를 권장합니다."},
-  {season:"가을 (9~11월)", icon:"🍂", temples:[
+  {season:"가을 (9~11월)", icon:"🍂", photo:{url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/%EB%82%B4%EC%9E%A5%EC%82%B0%EC%9D%98_%EB%8B%A8%ED%92%8D2.jpg/960px-%EB%82%B4%EC%9E%A5%EC%82%B0%EC%9D%98_%EB%8B%A8%ED%92%8D2.jpg",alt:"내장산 단풍",cap:"내장산 단풍",artist:"SHUNSHAN PIAO",lic:"CC BY-SA 3.0",page:"https://commons.wikimedia.org/wiki/File:%EB%82%B4%EC%9E%A5%EC%82%B0%EC%9D%98_%EB%8B%A8%ED%92%8D2.jpg"}, temples:[
     {n:"법주사", feature:"단풍"}, {n:"내장사", feature:"단풍"}, {n:"선운사", feature:"꽃무릇"}
   ], note:"전국 최고의 단풍·꽃무릇 명소 · 주말은 매우 혼잡하니 평일 방문을 추천합니다."},
-  {season:"겨울 (12~2월)", icon:"❄️", temples:[
+  {season:"겨울 (12~2월)", icon:"❄️", photo:{url:"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/05/%EB%B0%B1%EB%8B%B4%EC%82%AC3.jpg/960px-%EB%B0%B1%EB%8B%B4%EC%82%AC3.jpg",alt:"눈 덮인 백담사",cap:"눈 덮인 백담사",artist:"한국불교문화사업단",lic:"CC BY-SA 4.0",page:"https://commons.wikimedia.org/wiki/File:%EB%B0%B1%EB%8B%B4%EC%82%AC3.jpg"}, temples:[
     {n:"월정사", feature:"설경"}, {n:"신흥사", feature:"설경"}, {n:"백담사", feature:"설경"}
   ], note:"고요한 설경과 동안거 수행 분위기 · 방한용품 필수, 일부 사찰은 폐쇄될 수 있으니 확인하세요."},
 ];
@@ -1823,10 +1829,10 @@ function viewRoutes(){
     <div class="seasonal-grid">
       ${SEASONAL_COURSES.map(s => {
         const heroId = SEASONAL_ID_MAP[s.temples[0].n];
-        const heroPhoto = heroId ? templePhotoById(heroId) : null;
+        const heroPhoto = s.photo ? s.photo.url : (heroId ? templePhotoById(heroId) : null);
         return `
         <div class="seasonal-card">
-          ${heroPhoto ? `<img class="card-thumb" src="${esc(heroPhoto)}" alt="${esc(s.temples[0].n)}" loading="lazy">` : ''}
+          ${heroPhoto ? `<img class="card-thumb" src="${esc(heroPhoto)}" alt="${esc(s.photo ? s.photo.alt : s.temples[0].n)}" loading="lazy">` : ''}
           <h3>${s.icon} ${esc(s.season)}</h3>
           <ul class="seasonal-temples">
             ${s.temples.map(t=>{
@@ -1836,6 +1842,7 @@ function viewRoutes(){
             }).join('')}
           </ul>
           <p class="muted seasonal-note">${esc(s.note)}</p>
+          ${s.photo ? `<p class="muted" style="font-size:11px;margin:6px 0 0">사진: ${esc(s.photo.cap)} · ${esc(s.photo.artist)} · <a href="${esc(s.photo.page)}" target="_blank" rel="noopener">${esc(s.photo.lic)}</a></p>` : ''}
         </div>
       `;
       }).join('')}
@@ -2289,15 +2296,17 @@ function viewTop100(){
   const labels = { chong:'총림', unesco:'유네스코 산사', head:'교구본사', sambo:'삼보사찰', jeok:'적멸보궁' };
   const items = list.map(r=>{
     const region = String(r.addr || '').split(' ').slice(0,2).join(' ');
+    const photo = templePhotoById(r.id);
+    const thumb = photo ? '<img class="pilgrim-thumb" src="' + esc(photo) + '" alt="' + esc(r.name) + '" loading="lazy">' : svgLotus(16);
     const chips = [];
     if(r.gb) chips.push('<span class="top-chip">국보 ' + r.gb + '</span>');
     if(r.bm) chips.push('<span class="top-chip">보물 ' + r.bm + '</span>');
     if(r.ot) chips.push('<span class="top-chip">그 외 국가지정 ' + r.ot + '</span>');
     if(r.loc) chips.push('<span class="top-chip">지방지정 ' + r.loc + '</span>');
     Object.keys(labels).forEach(k=>{ if(r.b[k]) chips.push('<span class="top-chip gold">' + labels[k] + ' +' + r.b[k] + '</span>'); });
-    return '<a class="top-row" href="#/temple/' + r.id + '"><span class="top-rank">' + r.rank + '</span><span class="top-main"><b>' + esc(r.name) + '</b><span class="top-region">' + esc(region) + '</span><span class="top-tags">' + chips.join('') + '</span></span><span class="top-score"><b>' + r.score + '</b>점</span></a>';
+    return '<a class="top-row" href="#/temple/' + r.id + '"><span class="top-rank">' + r.rank + '</span>' + thumb + '<span class="top-main"><b>' + esc(r.name) + '</b><span class="top-region">' + esc(region) + '</span><span class="top-tags">' + chips.join('') + '</span></span><span class="top-score"><b>' + r.score + '</b>점</span></a>';
   }).join('');
-  return '<h1>지정 문화유산으로 본 100대 명찰</h1>' +
+  return '<h1>100대 문화유산 명찰</h1>' +
     '<p class="muted">&ldquo;한국 100대 명찰&rdquo;이라는 공식 목록은 없습니다. 이 페이지는 이 아카이브에 담긴 지정 문화유산(국가·시도가 법에 따라 보호하기로 정한 문화재) 수와 사찰의 지위를 점수로 바꿔 줄을 세운 것입니다. 유명한 정도나 신앙에서의 중요성을 재는 순위가 아닙니다.</p>' +
     '<section class="block top-formula"><h2 style="margin-top:0">점수 계산 방법</h2>' +
     '<p><b>문화유산 점수</b> &mdash; 국보 1건당 5점, 보물 1건당 3점, 사적·명승·천연기념물·국가민속문화유산·국가무형유산·국가등록문화유산 등 그 외 국가지정 1건당 2점.</p>' +
