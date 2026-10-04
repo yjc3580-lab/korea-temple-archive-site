@@ -1833,6 +1833,8 @@ function viewRoutes(){
       ${SEASONAL_COURSES.map(s => {
         const heroId = SEASONAL_ID_MAP[s.temples[0].n];
         const heroPhoto = s.photo ? s.photo.url : (heroId ? templePhotoById(heroId) : null);
+        const heroT = heroId ? TEMPLES.find(x=>x.id===heroId) : null;
+        const pc = s.photo ? s.photo : (heroT && heroT.photo ? { cap: heroT.name, artist: heroT.photoArtist, lic: heroT.photoLicense, page: heroT.photoFileUrl } : null);
         return `
         <div class="seasonal-card">
           ${heroPhoto ? `<img class="card-thumb" src="${esc(heroPhoto)}" alt="${esc(s.photo ? s.photo.alt : s.temples[0].n)}" loading="lazy">` : ''}
@@ -1845,7 +1847,7 @@ function viewRoutes(){
             }).join('')}
           </ul>
           <p class="muted seasonal-note">${esc(s.note)}</p>
-          ${s.photo ? `<p class="muted" style="font-size:11px;margin:6px 0 0">사진: ${esc(s.photo.cap)} · ${esc(s.photo.artist)} · <a href="${esc(s.photo.page)}" target="_blank" rel="noopener">${esc(s.photo.lic)}</a></p>` : ''}
+          ${pc ? `<p class="muted" style="font-size:11px;margin:6px 0 0">사진: ${esc(pc.cap)}${pc.artist ? ` · ${esc(pc.artist)}` : ''}${pc.lic ? ` · ${pc.page ? `<a href="${esc(pc.page)}" target="_blank" rel="noopener">${esc(pc.lic)}</a>` : esc(pc.lic)}` : ''}</p>` : ''}
         </div>
       `;
       }).join('')}
