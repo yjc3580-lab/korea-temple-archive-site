@@ -2369,7 +2369,7 @@ function computeMountainTemples(){
 function mtList(rows){
   if(!rows) return '';
   const parts = rows.split('<a class="mt-temple"').slice(1).map(p=>'<a class="mt-temple"' + p);
-  const head = parts.slice(0,12).join(''), rest = parts.slice(12);
+  const head = parts.slice(0,5).join(''), rest = parts.slice(5);
   return '<div class="mt-list">' + head + (rest.length ? '<details class="mt-more"><summary>더 보기 (' + rest.length + '곳)</summary><div class="mt-list">' + rest.join('') + '</div></details>' : '') + '</div>';
 }
 function viewMountains(){
@@ -2416,7 +2416,7 @@ function viewAbout(){
       <p>이후 사찰명이 같고 지번·도로명주소가 사실상 동일(표기차이만 있음)하거나 좌표간 거리가 100m 이내인 레코드를
       전수 조사해, 기존 자동 병합 로직이 놓친 중복을 총 189개 그룹(380개 레코드)에서 추가로 발견해 통합했습니다
       (1,498개 → 1,307개, 191개 레코드 감소). 좌표간 거리가 100~300m로 애매해 서로 다른 사찰일 가능성을 배제할 수 없어 처음에는 통합하지 않았던
-      9건(동고사·영혈사·옥산사·원등사·유석사·은석사·진불사·학선암·홍련암)은 이후 하나씩 다시 확인해 모두 통합했습니다. 또한 지번·도로명주소
+      9건(동고사·영혈사·옥산사·원등사·유석사·은석사·진불사·학선암·홍련암)은 이후 모두 하나로 통합했습니다. 또한 지번·도로명주소
       문자열은 같지만 좌표가 수 km 이상 떨어져 있고 주소 내 읍/면 표기 자체가 서로 달라 원본 데이터 오류로 판단된 1건(안동
       석탑사)도 통합에서 제외했습니다.</p>
       <p>2026년 9월, 군위군이 2023년 7월 경상북도에서 대구광역시로 편입되면서 같은 사찰이 "경상북도"/"대구광역시" 두 표기로
