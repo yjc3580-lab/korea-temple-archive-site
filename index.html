@@ -334,6 +334,19 @@
     display:inline-flex; align-items:center; gap:5px; padding:7px 12px; border-radius:999px;
     background:var(--brand-50); color:var(--brand-dark); font-size:12.5px; font-weight:700;
   }
+  .top-list{display:flex; flex-direction:column; gap:8px; margin-top:14px}
+  .top-row{display:flex; align-items:center; gap:12px; padding:11px 14px; border:1px solid var(--line); border-radius:10px; background:var(--bg-raised)}
+  .top-row:hover{border-color:var(--brand)}
+  .top-rank{flex:none; min-width:34px; text-align:center; font-weight:800; font-size:15px; color:var(--brand-dark); font-variant-numeric:tabular-nums}
+  .top-main{flex:1; min-width:0; display:flex; flex-wrap:wrap; gap:3px 10px; align-items:baseline}
+  .top-main b{font-size:15.5px}
+  .top-region{font-size:12.5px; color:var(--ink-soft)}
+  .top-tags{flex-basis:100%; display:flex; flex-wrap:wrap; gap:5px}
+  .top-chip{font-size:11.5px; padding:2px 8px; border-radius:999px; background:var(--blue-50); color:var(--blue-700)}
+  .top-chip.gold{background:var(--gold-50); color:var(--gold-dark)}
+  .top-score{flex:none; font-size:13px; color:var(--ink-soft)}
+  .top-score b{font-size:20px; color:var(--ink); font-variant-numeric:tabular-nums}
+  .top-formula p{margin:8px 0}
   .source-note{font-size:12px; color:var(--ink-soft); margin-top:16px}
   .quote-block{
     position:relative; border-left:3px solid var(--gold); padding:4px 0 4px 16px; margin:16px 0 22px;
@@ -492,6 +505,7 @@
     <a href="#/templefood" data-r="templefood">사찰음식</a>
     <a href="#/culture" data-r="culture">불교 상식·교구본사</a>
     <a href="#/visitmap" data-r="visitmap">방문사찰지도</a>
+    <a href="#/top100" data-r="top100">상위 100곳</a>
     <a href="#/about" data-r="about">데이터 출처</a>
   </nav>
   <a class="btn mypage-btn" href="#/mypage">마이페이지</a>
@@ -712,6 +726,7 @@ function render(){
   else if(name==='culture') app.innerHTML = viewCulture();
   else if(name==='visitmap') { app.innerHTML = viewVisitMap(); wireVisitMap(); }
   else if(name==='mypage') { app.innerHTML = viewMyPage(); wireMyPage(); }
+  else if(name==='top100') app.innerHTML = viewTop100();
   else if(name==='about') app.innerHTML = viewAbout();
   else app.innerHTML = '<div class="empty">페이지를 찾을 수 없습니다.</div>';
   window.scrollTo(0,0);
@@ -2246,6 +2261,51 @@ function viewCulture(){
 
     
   `;
+}
+
+function computeTop100(){
+  const NAT=/^(국보|보물|사적|명승|천연기념물|국가민속|국가무형|국가등록)/;
+  const idOf=m=>new Set(Object.values(m));
+  const CH=idOf(CHONGRIM_ID_MAP),UN=idOf(UNESCO7_ID_MAP),SB=idOf(SAMBO_ID_MAP),JM=idOf(JEOKMYEOL_ID_MAP),HT=new Set(HEAD_TEMPLES.map(h=>h.id));
+  const rows=TEMPLES.map(t=>{
+    const it=t.heritageItems||[]; let gb=0,bm=0,ot=0;
+    it.forEach(h=>{ if(h.type==='국보')gb++; else if(h.type==='보물')bm++; else if(NAT.test(h.type))ot++; });
+    const loc=it.length-(gb+bm+ot);
+    const b={chong:CH.has(t.id)?10:0,unesco:UN.has(t.id)?10:0,head:HT.has(t.id)?5:0,sambo:SB.has(t.id)?5:0,jeok:JM.has(t.id)?3:0};
+    const bonus=b.chong+b.unesco+b.head+b.sambo+b.jeok;
+    const base=gb*5+bm*3+ot*2;
+    return {id:t.id,name:t.name,addr:t.addr,province:t.province,gb,bm,ot,loc,b,base,bonus,score:base+bonus};
+  });
+  rows.sort((a,b)=>b.score-a.score||b.loc-a.loc||a.id-b.id);
+  return rows;
+}
+
+function viewTop100(){
+  const rows = computeTop100();
+  let prev = null, rk = 0;
+  rows.forEach((r,i)=>{ const key = r.score + '|' + r.loc; if(key !== prev){ rk = i + 1; prev = key; } r.rank = rk; });
+  const list = rows.filter(r=>r.rank <= 100);
+  const extra = list.length - 100;
+  const labels = { chong:'총림', unesco:'유네스코 산사', head:'교구본사', sambo:'삼보사찰', jeok:'적멸보궁' };
+  const items = list.map(r=>{
+    const region = String(r.addr || '').split(' ').slice(0,2).join(' ');
+    const chips = [];
+    if(r.gb) chips.push('<span class="top-chip">국보 ' + r.gb + '</span>');
+    if(r.bm) chips.push('<span class="top-chip">보물 ' + r.bm + '</span>');
+    if(r.ot) chips.push('<span class="top-chip">그 외 국가지정 ' + r.ot + '</span>');
+    if(r.loc) chips.push('<span class="top-chip">지방지정 ' + r.loc + '</span>');
+    Object.keys(labels).forEach(k=>{ if(r.b[k]) chips.push('<span class="top-chip gold">' + labels[k] + ' +' + r.b[k] + '</span>'); });
+    return '<a class="top-row" href="#/temple/' + r.id + '"><span class="top-rank">' + r.rank + '</span><span class="top-main"><b>' + esc(r.name) + '</b><span class="top-region">' + esc(region) + '</span><span class="top-tags">' + chips.join('') + '</span></span><span class="top-score"><b>' + r.score + '</b>점</span></a>';
+  }).join('');
+  return '<h1>지정 문화유산으로 본 상위 100곳</h1>' +
+    '<p class="muted">&ldquo;한국 100대 명찰&rdquo;이라는 공식 목록은 없습니다. 이 페이지는 이 아카이브에 담긴 지정 문화유산(국가·시도가 법에 따라 보호하기로 정한 문화재) 수와 사찰의 지위를 점수로 바꿔 줄을 세운 것입니다. 유명한 정도나 신앙에서의 중요성을 재는 순위가 아닙니다.</p>' +
+    '<section class="block top-formula"><h2 style="margin-top:0">점수 계산 방법</h2>' +
+    '<p><b>문화유산 점수</b> &mdash; 국보 1건당 5점, 보물 1건당 3점, 사적·명승·천연기념물·국가민속문화유산·국가무형유산·국가등록문화유산 등 그 외 국가지정 1건당 2점.</p>' +
+    '<p><b>사찰 지위 가산점</b> &mdash; 총림(승려 교육 기관을 갖춘 대형 사찰) +10, 유네스코 세계유산 &ldquo;산사, 한국의 산지승원&rdquo; 7곳 +10, 조계종 교구본사 +5, 삼보사찰(통도사·해인사·송광사) +5, 적멸보궁(부처님 진신사리를 모신 곳) +3.</p>' +
+    '<p><b>동점 처리</b> &mdash; 점수가 같으면 시·도 지정 문화유산(지방지정) 수가 많은 쪽을 앞에 둡니다. 그 수까지 같으면 같은 순위로 표시합니다' + (extra > 0 ? ' (그래서 이 목록은 ' + list.length + '곳입니다)' : '') + '.</p>' +
+    '<p class="source-note" style="margin-top:8px">한계: 점수의 가중치(5·3·2점 등)는 이 아카이브가 정한 값이며 객관적인 기준이 아닙니다. 불국사·석굴암의 유네스코 세계유산 등재(1995년)는 위 유네스코 7곳과 별개의 등재라 가산점에 넣지 않았기 때문에, 석굴암 등은 널리 알려진 명성보다 낮게 나올 수 있습니다. 지정 문화유산이 적은 사찰이라도 가치가 낮다는 뜻은 아닙니다.</p></section>' +
+    '<div class="top-list">' + items + '</div>' +
+    '<p class="source-note">건수는 각 사찰 상세 페이지의 &ldquo;지정 문화유산&rdquo; 항목을 그대로 센 값이며, 사찰을 누르면 상세 페이지로 이동합니다.</p>';
 }
 
 // ---------------- 데이터 출처 ----------------
