@@ -2403,6 +2403,9 @@ function mtCredits(){
   return '<h2 style="margin-top:28px">산 사진 출처</h2><p class="muted">산 사진 ' + total + '장은 두 곳에서 가져왔습니다. ' + pr.length + '장은 위키미디어 커먼즈(Wikimedia Commons)에 공개된 사진 중 촬영자와 이용 조건을 확인할 수 있는 것이고, ' + kr.length + '장은 한국관광공사가 공공데이터포털(data.go.kr)에 공개한 국문 관광정보 서비스의 사진(공공누리 제1유형·제3유형, 출처 표시)입니다. 공공누리 제3유형 사진은 변경 금지 조건에 따라 자르지 않고 원본 비율 그대로 표시합니다. 사진이 없는 산(' + (MOUNTAINS100.length - total) + '곳)은 산 모양 그림으로 표시합니다.</p>' +
     '<details class="mt-more"><summary>사진별 출처·이용 조건 보기 (' + total + '장)</summary><ul class="mt-credits">' + pr.map(m=>'<li>' + esc(m.n) + ' — ' + esc(m.p[1]) + ', ' + esc(m.p[2]) + ' · <a href="https://commons.wikimedia.org/wiki/File:' + esc(m.p[3].slice(2)) + '" target="_blank" rel="noopener">원본</a></li>').join('') + kr.map(m=>'<li>' + esc(m.n) + ' — 한국관광공사 제공 「' + esc(m.k[2]) + '」, 공공누리 제' + m.k[1] + '유형 (한국관광공사 콘텐츠 ID ' + esc(m.k[3]) + ')</li>').join('') + '</ul></details>';
 }
+function mtEmptyCard(m){
+  return '<section class="mt-card"><div class="mt-top">' + mtThumb(m) + '<div class="mt-head"><b>' + esc(m.n) + '</b><span class="mt-meta">' + esc(m.h) + 'm · ' + esc(m.l) + '</span></div></div>' + (m.w ? '<p class="mt-why">' + esc(m.w) + '</p>' : '') + '</section>';
+}
 function viewMountains(){
   const all = computeMountainTemples();
   const linked = all.filter(x=>x.list.length>0);
@@ -2427,7 +2430,7 @@ function viewMountains(){
     '<p><b>연혁에 산 이름 기재</b> &mdash; 사찰 연혁에 해당 산 이름이 적혀 있고 산 좌표에서 25km 이내인 사찰입니다.</p>' +
     '<p class="source-note" style="margin-top:8px">한계: 직선거리 기준이라 &ldquo;산 안에 있다&rdquo;는 뜻이 아니라 &ldquo;산 가까이에 있다&rdquo;는 뜻입니다. 오대산·지리산처럼 큰 산은 대표 좌표(정상)에서 사찰까지 멀어 빠질 수 있습니다. 명산 목록은 위키백과 &ldquo;대한민국 100대 명산 목록&rdquo;(산림청 2002년 10월 선정 발표 기준), 산 좌표는 위키데이터에서 가져왔으며, 사찰 좌표가 확인된 곳만 거리를 계산합니다.</p><p class="source-note" style="margin-top:8px">각 산 카드의 설명은 산림청 국립자연휴양림관리소가 공공데이터포털에 공개한 「숲나들e 숲길 100대명산 정보」(2025년 4월 21일 기준, 이용허락범위 제한 없음)의 “특징 및 선정 이유” 항목을 그대로 옮긴 것입니다.</p></section>' +
     linked.map(card).join('') +
-    (empty.length ? '<h2 style="margin-top:28px">연결되는 사찰이 없는 명산 (' + empty.length + '곳)</h2><p class="muted">위 기준으로는 이 아카이브의 사찰이 잡히지 않은 산입니다. 사찰이 없다는 뜻이 아니라 기준 안에 들어오지 않았다는 뜻입니다.</p>' + '<div class="mt-empty">' + empty.map(x=>'<span class="top-chip">' + esc(x.m.n) + (x.m.c ? '' : ' (좌표 없음)') + '</span>').join('') + '</div>' : '') + mtCredits();
+    (empty.length ? '<h2 style="margin-top:28px">연결되는 사찰이 없는 명산 (' + empty.length + '곳)</h2><p class="muted">위 기준으로는 이 아카이브의 사찰이 잡히지 않은 산입니다. 사찰이 없다는 뜻이 아니라 기준 안에 들어오지 않았다는 뜻입니다.</p>' + empty.map(x=>mtEmptyCard(x.m)).join('') : '') + mtCredits();
 }
 
 // ---------------- 데이터 출처 ----------------
