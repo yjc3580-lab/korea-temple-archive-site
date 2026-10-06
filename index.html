@@ -197,6 +197,14 @@
   header.top{padding:14px 20px}
   header.top nav{flex:1}
   .mypage-btn{white-space:nowrap}
+@media (max-width:700px){
+  header.top{padding:10px 14px; gap:6px 10px}
+  header.top .brand{order:1; flex:1; min-width:0; font-size:15px}
+  header.top .mypage-btn{order:2}
+  header.top nav{order:3; flex:0 0 100%; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; gap:0; margin:0 -6px}
+  header.top nav::-webkit-scrollbar{display:none}
+  header.top nav a{white-space:nowrap; flex:none}
+}
 
   /* ---- 산사 능선 히어로 ---- */
   .mountain-hero{
@@ -741,7 +749,7 @@ window.addEventListener('DOMContentLoaded', ()=>{ if(!location.hash) location.ha
 
 function render(){
   const { name, arg } = currentRoute();
-  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active', a.dataset.r===name));
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active', a.dataset.r===name)); { const ac=document.querySelector('#nav a.active'), nv=document.getElementById('nav'); if(ac && nv && nv.scrollWidth>nv.clientWidth){ nv.scrollLeft += ac.getBoundingClientRect().left - nv.getBoundingClientRect().left - (nv.clientWidth-ac.offsetWidth)/2; } }
   const app = document.getElementById('app');
   if(name==='home') app.innerHTML = viewHome();
   else if(name==='search') { app.innerHTML = viewSearch(); wireSearch(); }
